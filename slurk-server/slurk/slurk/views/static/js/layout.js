@@ -19,9 +19,14 @@ function text_update(data) {
     $('#' + data.id).text(data.text).show();
 }
 
+function html_update(data) {
+    $('#' + data.id).html(data.text).show();
+}
+
 $(document).ready(() => {
     socket.on('attribute_update', attribute_update);
     socket.on('class_add', class_add);
     socket.on('class_remove', class_remove);
     socket.on('text_update', text_update);
+    socket.on('html_update', html_update);
 });

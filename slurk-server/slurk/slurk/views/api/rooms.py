@@ -289,6 +289,22 @@ class Text(MethodView):
         return kwargs
 
 
+@blp.route("/<int:room_id>/html/<string:id>")
+class HTML(MethodView):
+    @blp.query("room", RoomSchema, check_etag=False)
+    @blp.arguments(TextSchema, as_kwargs=True)
+    @blp.response(204)
+    @blp.login_required
+    def patch(self, *, room, id, **kwargs):
+        """Update the text of an element identified by it's ID"""
+        kwargs["id"] = id
+        receiver_id = kwargs.pop("receiver_id", None)
+        receiver, target = get_receiver_target(receiver_id, str(room.id))
+        Log.add("set_html", room=room, receiver=receiver, data=kwargs)
+        socketio.emit("html_update", kwargs, room=target)
+        return kwargs
+
+
 @blp.route("/<int:room_id>/class/<string:id>")
 class Class(MethodView):
     @blp.query("room", RoomSchema, check_etag=False)
