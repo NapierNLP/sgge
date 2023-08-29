@@ -13,7 +13,7 @@ class ConciergeBot:
     sio = socketio.Client(logger=True)
     tasks = dict()
 
-    def __init__(self, token, user, host, port):
+    def __init__(self, token, user, host, port, prefix=''):
         """This bot lists users joining a designated
         waiting room and sends a group of users to a task room
         as soon as the minimal number of users needed for the
@@ -35,7 +35,8 @@ class ConciergeBot:
         self.uri = host
         if port is not None:
             self.uri += f":{port}"
-        self.uri += "/slurk/api"
+        self.prefix = prefix
+        self.uri += f"{self.prefix}/slurk/api"
 
         LOG.info(f"Running concierge bot on {self.uri} with token {self.token}")
         # register all event handlers
@@ -47,6 +48,7 @@ class ConciergeBot:
             self.uri,
             headers={"Authorization": f"Bearer {self.token}", "user": self.user},
             namespaces="/",
+            socketio_path=f"{self.prefix}/socket.io" if self.prefix else 'socket.io',
         )
         # wait until the connection with the server ends
         self.sio.wait()
@@ -100,6 +102,18 @@ class ConciergeBot:
             exit(2)
         LOG.debug("Got user task successfully.")
         return task.json()
+
+    def get_user(self, user):
+        response = requests.get(
+            f"{self.uri}/users/{user}",
+            headers={"Authorization": f"Bearer {self.token}"}
+        )
+        if not response.ok:
+            LOG.error(
+                f"Could not get user: {response.status_code}"
+            )
+            response.raise_for_status()
+        return response.headers["ETag"]
 
     def create_room(self, layout_id):
         """Create room for the task.
@@ -182,8 +196,9 @@ class ConciergeBot:
             # list cast necessary because the dictionary is actively altered
             # due to parallely received "leave" events
             for user_id, old_room_id in list(self.tasks[task_id].items()):
-                etag = self.join_room(user_id, new_room["id"])
+                etag = self.get_user(user_id)
                 self.delete_room(user_id, old_room_id, etag)
+                self.join_room(user_id, new_room["id"])
             del self.tasks[task_id]
             self.sio.emit("room_created", {"room": new_room["id"], "task": task_id})
         else:
@@ -232,6 +247,10 @@ if __name__ == "__main__":
         user = {"default": os.environ["SLURK_USER"]}
     else:
         user = {"required": True}
+    if "SLURK_PREFIX" in os.environ:
+        prefix = {"default": os.environ["SLURK_PREFIX"]}
+    else:
+        prefix = {"default": ""}
     host = {"default": os.environ.get("SLURK_HOST", "http://localhost")}
     port = {"default": os.environ.get("SLURK_PORT")}
 
@@ -244,9 +263,10 @@ if __name__ == "__main__":
         "-c", "--host", help="full URL (protocol, hostname) of chat server", **host
     )
     parser.add_argument("-p", "--port", type=int, help="port of chat server", **port)
+    parser.add_argument("--prefix", type=str, help="prefix for the slurk server", **prefix)
     args = parser.parse_args()
 
     # create bot instance
-    concierge_bot = ConciergeBot(args.token, args.user, args.host, args.port)
+    concierge_bot = ConciergeBot(args.token, args.user, args.host, args.port, args.prefix)
     # connect to chat server
     concierge_bot.run()
