@@ -70,6 +70,22 @@ def index():
                     "The token is an API token, which can not be used for logging in.",
                     "error",
                 )
+            elif token.registrations_left < 0:
+                # Special login-token
+                # Query DB to look up details for existing user with this token
+                users = db.query(User).filter(User.token_id == token.id).all()
+                current_app.logger.debug(str(users))
+                if len(users) > 0:
+                    user = users[0]
+                    # Login that user
+                    login_user(user)
+                    return redirect(request.args.get("next") or url_for("chat.index"))
+                else:
+                    user = User(name=name, token=token, rooms=[token.room])
+                    db.add(user)
+                    db.commit()
+                    login_user(user)
+                    return redirect(request.args.get("next") or url_for("chat.index"))
             elif token.registrations_left != 0:
                 if token.registrations_left > 0:
                     token.registrations_left -= 1
