@@ -1,3 +1,41 @@
 [tool.pytest.ini_options]
 testpaths = "tests/"
 filterwarnings = ["ignore::DeprecationWarning", "ignore:Unverified HTTPS request"]
+
+[tool.poetry]
+name = "slurk"
+version = "2.0.0+dev"
+description = "slurk (think “slack for mechanical turk”…) is a lightweight and easily extensible chat server built especially for conducting multimodal dialogue experiments or data collections."
+authors = ["slurk contributors (see CONTRIBUTORS.md)"]
+license = "BSD 3 Clause"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Flask = "2.0"
+Flask-HTTPAuth = "4.4"
+Flask-Login = "0.5"
+Flask-SocketIO = "5.0"
+Flask-WTF = "0.15.1"
+flask-smorest = "0.31.3"
+marshmallow = "3.12"
+requests = "2.25.1"
+SQLAlchemy = "1.4"
+Werkzeug = "2.0"
+WTForms = "2.3"
+six = "^1.16.0"
+gevent-websocket = "^0.10.1"
+gunicorn = "^20.1.0"
+regex = "^2022.7.9"
+thefuzz = {extras = ["speedup"], version = "^0.19.0"}
+openpyxl = "^3.0.10"
+
+[tool.poetry.dev-dependencies]
+docker = "^5.0"
+pytest = "^6.2.0"
+pytest-depends = "^1.0"
+black = "^22.6.0"
+flake8 = "^4.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
