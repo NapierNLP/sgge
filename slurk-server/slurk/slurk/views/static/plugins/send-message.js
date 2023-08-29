@@ -1,4 +1,4 @@
-if (text.match("^/")) {
+if (text.trim().match("^/")) {
     submit_command(text.substr(1));
     display_message(current_user, current_timestamp, text.substr(1), true);
 } else if (text.match("^image:")) {
