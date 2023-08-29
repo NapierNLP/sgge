@@ -1,0 +1,1 @@
+docker stop qasum-bot concierge-bot slurk

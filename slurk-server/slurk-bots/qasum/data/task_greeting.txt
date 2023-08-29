@@ -1,0 +1,7 @@
+**Welcome to the QASum experiment!**
+
+
+In this experiment, you will have a conversation with another person about a museum exhibit and then summarise what you discussed.
+
+
+Please type **/ready** to begin the experiment.
