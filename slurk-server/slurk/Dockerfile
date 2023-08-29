@@ -11,4 +11,4 @@ run rm /tmp/requirements.txt
 COPY slurk /usr/src/slurk
 
 EXPOSE 80
-ENTRYPOINT ["gunicorn", "-b", ":80", "-k", "geventwebsocket.gunicorn.workers.GeventWebSocketWorker", "slurk:create_app()"]
+ENTRYPOINT ["gunicorn", "-b", ":80", "-w", "1", "-k", "geventwebsocket.gunicorn.workers.GeventWebSocketWorker", "slurk:create_app()", "--timeout", "300", "--access-logfile", "-"]
