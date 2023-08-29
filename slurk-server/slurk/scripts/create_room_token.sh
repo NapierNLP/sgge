@@ -11,10 +11,11 @@ set -eu
 TOKEN=${SLURK_TOKEN:=00000000-0000-0000-0000-000000000000}
 HOST=${SLURK_HOST:-http://localhost}
 PORT=${SLURK_PORT:-5000}
+PREFIX=${SLURK_PREFIX:-/chat}
 
 if [ "$#" -lt 2 ]; then
   echo "Usage: $0 room_id permissions_path [registrations_left] [task_id]" 1>&2
-  echo "For more info see $HOST:$PORT/rapidoc#post-/slurk/api/tokens"
+  echo "For more info see $HOST:$PORT$PREFIX/rapidoc#post-/slurk/api/tokens"
   exit 1
 fi
 
@@ -34,7 +35,7 @@ function check_error {
     fi
 }
 
-response=$(curl -sX POST $HOST:$PORT/slurk/api/permissions \
+response=$(curl -sX POST $HOST:$PORT$PREFIX/slurk/api/permissions \
     -H "Accept: application/json" \
     -H "Authorization: Bearer $TOKEN" \
     -H "Content-Type: application/json" \
@@ -47,6 +48,6 @@ response=$(curl -sX POST \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
     -d "{\"permissions_id\": $permissions, \"room_id\": $ROOM, \"registrations_left\": $REGISTRATIONS, \"task_id\": $TASK}" \
-    $HOST:$PORT/slurk/api/tokens)
+    $HOST:$PORT$PREFIX/slurk/api/tokens)
 check_error "$response"
 echo "$response" | jq

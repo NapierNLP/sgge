@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-set -eu
+set -euo pipefail
 
 # Parameters:
-#   scripts/create_task.sh name num_users layout_id
+#   scripts/create_user.sh user_id room_id
 # Environment variables:
 #   SLURK_TOKEN: Token to pass as authorization, defaults to `00000000-0000-0000-0000-000000000000`
 #   SLURK_HOST: Host name to use for the request, defaults to `http://localhost`
@@ -13,15 +13,14 @@ HOST=${SLURK_HOST:-http://localhost}
 PORT=${SLURK_PORT:-5000}
 PREFIX=${SLURK_PREFIX:-/chat}
 
-if [ "$#" -lt 3 ]; then
-  echo "Usage: $0 name num_users layout_id" 1>&2
-  echo "For more info see $HOST:$PORT/rapidoc#post-/slurk/api/tasks"
-  exit 1
+if [ "$#" -lt 2 ]; then
+    echo "Usage: $0 name token_id" 1>&2
+    echo "For more info see $HOST:$PORT$PREFIX/rapidoc#post-/slurk/api/users"
+    exit 1
 fi
 
-NAME=$1
-USERS=$2
-LAYOUT=$3
+USER_ID=${1}
+ROOM_ID=${2}
 
 function check_error {
     if [ "$(jq '. | has("code")' <<< "$1")" = true ]; then
@@ -33,11 +32,13 @@ function check_error {
     fi
 }
 
-response=$(curl -sX POST \
+echo "$HOST:$PORT$PREFIX/slurk/api/users/${USER_ID}/rooms/${ROOM_ID}"
+echo $TOKEN
+response=$(curl -sX DELETE \
     -H "Authorization: Bearer $TOKEN" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d "{\"name\": \"$NAME\", \"num_users\": $USERS, \"layout_id\": $LAYOUT}" \
-    $HOST:$PORT$PREFIX/slurk/api/tasks)
+    -H "If-Match: *" \
+    "$HOST:$PORT$PREFIX/slurk/api/users/${USER_ID}/rooms/${ROOM_ID}")
 check_error "$response"
 echo "$response" | jq

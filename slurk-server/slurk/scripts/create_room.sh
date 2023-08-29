@@ -11,6 +11,7 @@ set -eu
 TOKEN=${SLURK_TOKEN:=00000000-0000-0000-0000-000000000000}
 HOST=${SLURK_HOST:-http://localhost}
 PORT=${SLURK_PORT:-5000}
+PREFIX=${SLURK_PREFIX:-/chat}
 
 if [ "$#" -lt 1 ]; then
   echo "Usage: $0 layout_id [session_id]" 1>&2
@@ -40,6 +41,6 @@ response=$(curl -sX POST \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
     -d "{\"layout_id\": $LAYOUT $SESSION}" \
-    $HOST:$PORT/slurk/api/rooms)
+    $HOST:$PORT$PREFIX/slurk/api/rooms)
 check_error "$response"
 echo "$response" | jq

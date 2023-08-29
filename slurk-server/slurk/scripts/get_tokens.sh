@@ -2,7 +2,7 @@
 set -eu
 
 # Parameters:
-#   scripts/create_layout.sh layout_path
+#   scripts/print_logs.sh room_id
 # Environment variables:
 #   SLURK_TOKEN: Token to pass as authorization, defaults to `00000000-0000-0000-0000-000000000000`
 #   SLURK_HOST: Host name to use for the request, defaults to `http://localhost`
@@ -13,29 +13,15 @@ HOST=${SLURK_HOST:-http://localhost}
 PORT=${SLURK_PORT:-5000}
 PREFIX=${SLURK_PREFIX:-/chat}
 
-if [ "$#" -lt 1 ]; then
-  echo "Usage: $0 layout_path" 1>&2
-  echo "For more info see $HOST:$PORT$PREFIX/rapidoc#post-/slurk/api/layouts"
+if [ "$#" -gt 0 ]; then
+  echo "Usage: $0" 1>&2
+  echo "For more info see $HOST:$PORT/rapidoc#get-/slurk/api/tokens"
   exit 1
 fi
 
-path=$1
-
-function check_error {
-    if [ "$(jq '. | has("code")' <<< "$1")" = true ]; then
-        jq -r .message <<< "$1" 1>&2
-        if [ "$(jq '. | has("errors")' <<< "$1")" = true ]; then
-            jq -r .errors <<< "$1" 1>&2
-        fi
-        exit 1
-    fi
-}
-
-response=$(curl -sX POST \
+response=$(curl -sX GET \
     -H "Authorization: Bearer $TOKEN" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d @$path \
-    $HOST:$PORT$PREFIX/slurk/api/layouts)
-check_error "$response"
-echo "$response" | jq
+    $HOST:$PORT$PREFIX/slurk/api/tokens)
+echo "$response"

@@ -11,6 +11,7 @@ set -eu
 TOKEN=${SLURK_TOKEN:=00000000-0000-0000-0000-000000000000}
 HOST=${SLURK_HOST:-http://localhost}
 PORT=${SLURK_PORT:-5000}
+PREFIX=${SLURK_PREFIX:-/chat}
 
 function check_error {
     if [ "$(jq '. | has("code")' <<< "$1")" = true ]; then
@@ -26,6 +27,6 @@ response=$(curl -sX POST \
     -H "Authorization: Bearer $TOKEN" \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    $HOST:$PORT/slurk/api/openvidu/sessions)
+    $HOST:$PORT$PREFIX/slurk/api/openvidu/sessions)
 check_error "$response"
 echo "$response" | jq

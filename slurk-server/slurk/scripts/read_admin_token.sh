@@ -6,7 +6,7 @@ set -eu
 #   SLURK_DOCKER: Docker container name to use
 
 for i in {1..10}; do
-    logs=$(docker logs $SLURK_DOCKER 2>&1)
+    logs=$(docker logs ${SLURK_DOCKER} 2>&1)
     if echo $logs | grep -q 'admin token'; then
         ADMIN_TOKEN=$(echo "$logs" | sed -n '/admin token/{n;p;}')
         break

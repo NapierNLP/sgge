@@ -11,10 +11,11 @@ set -eu
 TOKEN=${SLURK_TOKEN:=00000000-0000-0000-0000-000000000000}
 HOST=${SLURK_HOST:-http://localhost}
 PORT=${SLURK_PORT:-5000}
+PREFIX=${SLURK_PREFIX:-/chat}
 
 if [ "$#" -lt 2 ]; then
     echo "Usage: $0 name token_id" 1>&2
-    echo "For more info see $HOST:$PORT/rapidoc#post-/slurk/api/users"
+    echo "For more info see $HOST:$PORT$PREFIX/rapidoc#post-/slurk/api/users"
     exit 1
 fi
 
@@ -36,6 +37,6 @@ response=$(curl -sX POST \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
     -d "{\"name\": \"$NAME\",\"token_id\": \"$USER_TOKEN\"}" \
-    $HOST:$PORT/slurk/api/users)
+    $HOST:$PORT$PREFIX/slurk/api/users)
 check_error "$response"
 echo "$response" | jq

@@ -9,6 +9,7 @@ set -eu
 TOKEN=${SLURK_TOKEN:=00000000-0000-0000-0000-000000000000}
 HOST=${SLURK_HOST:-http://localhost}
 PORT=${SLURK_PORT:-5000}
+PREFIX=${SLURK_PREFIX:-/chat}
 
 function check_error {
     if [ "$(jq '. | has("code")' <<< "$1")" = true ]; then
@@ -33,6 +34,6 @@ response=$(curl -sX POST \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
     -d "{\"permissions_id\": $permissions}" \
-    $HOST:$PORT/slurk/api/tokens)
+    $HOST:$PORT$PREFIX/slurk/api/tokens)
 check_error "$response"
 echo "$response" | jq
