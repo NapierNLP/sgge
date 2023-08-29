@@ -29,8 +29,10 @@ function headers(xhr) {
 }
 
 $(document).ready(() => {
-    let uri = location.protocol + '//' + document.domain + ':' + location.port + "/slurk/api";
-    socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+    let uri = location.protocol + '//' + document.domain + ':' + location.port + "/gaelic/slurk/api";
+    socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port, {
+  path: "/gaelic/socket.io/"
+});
 
     function apply_layout(layout) {
         if (!layout)
