@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "sgge-analysis"
+version = "1.0"
+description = "Code for analysing the SGGE Corpus"
+authors = ["Dave Howcroft <dave.howcroft@gmail.com>"]
+license = "Apache 2"
+readme = "README.md"
+packages = [{include = "sgge_analysis"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+numpy = "^1.25.2"
+pandas = "^2.1.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
