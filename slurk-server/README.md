@@ -1,0 +1,1 @@
+We ran the server and database by running `docker compose up -d` in this directory on the server. It uses the postgres password environment variable set in .env and the slurk production environment variables set in slurk_production. Don't forget to set a password for postgres and a secret key for slurk.
