@@ -1,0 +1,27 @@
+
+version: "3.9"
+
+services:
+  db:
+    image: postgres:14.4
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./my-postgres.conf:/etc/postgresql/postgresql.conf
+  slurk:
+    ntainer_name: slurk
+    image: slurk/server
+    restart: on-failure
+    ports:
+      - 8080:80
+    env_file:
+      - slurk_production.env
+    environment:
+      - SLURK_DATABASE_URI=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/postgres
+    build: ./slurk
+    depends_on:
+      - db
