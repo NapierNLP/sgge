@@ -160,7 +160,7 @@ if __name__ == "__main__":
     print(f"Mean # of turns (s.d.): {np.mean(convo_stats['total_turns'])} ({np.std(convo_stats['total_turns'])})")
     print(f"Total conversation duration (seconds): {sum(convo_stats['total_duration'])}")
     print(f"Mean conversation duration in seconds (s.d.): {np.mean(convo_stats['total_duration'])} ({np.std(convo_stats['total_duration'])})")
-    print(f"Mean turn length in wordds (s.d.): {np.mean(convo_stats['mean_turn_length'])} ({np.std(convo_stats['mean_turn_length'])})")
+    print(f"Mean turn length in seconds (s.d.): {np.mean(convo_stats['mean_turn_length'])} ({np.std(convo_stats['mean_turn_length'])})")
     print(f"Total turns (participants only): {len(convo_texts)}")
     print("__________________")
 
